@@ -9,15 +9,15 @@ namespace WpfBlockchain
     //[Serializable]
     public class BlockChain
     {
-        public List<Block> Chain { get; set; }
-        DateTime Created { get; set; } = DateTime.Now;
+        public List<Block> Chain { get; set; } = new List<Block>();
+        public DateTime Created { get; set; } = DateTime.Now;
 
-        public BlockChain() { }
+        public BlockChain()     // empty Constructor is needed by jsonSerializer
+        { 
+        }   
 
         public BlockChain(bool generateFirstBlock = false)
         {
-            Chain = new List<Block>();
-            Created = DateTime.Now;
             if (generateFirstBlock)
             {
                 Block b = new Block(DateTime.Now, "{}");
@@ -35,6 +35,19 @@ namespace WpfBlockchain
             }
             block.CalculateHash();
             Chain.Add(block);
+        }
+
+        public int ValidateChain()
+        {
+            for (int i = 0; i < Chain.Count; i++)
+            {
+                if (!Chain[i].ValidateHash())
+                    return i;
+                
+                if (i > 0 && Chain[i].PreviousHash != Chain[i - 1].Hash)
+                    return i;
+            }
+            return -1;      // -1 => OK, check passed
         }
     }
 }

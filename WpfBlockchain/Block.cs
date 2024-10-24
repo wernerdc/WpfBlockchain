@@ -16,6 +16,7 @@ namespace WpfBlockchain
         public string Hash { get; set; } = String.Empty;
         public string PreviousHash { get; set; } = String.Empty;
 
+        // DEBUG: causes datagrid error that adds an empty row at the end
         //public Block() { }
 
         public Block(DateTime timeStamp, string data)
@@ -26,12 +27,22 @@ namespace WpfBlockchain
 
         public void CalculateHash()
         {
-            SHA256 sha256 = SHA256.Create();
-            byte[] inputBytes = Encoding.ASCII.GetBytes(
-                $"{TimeStamp}-{PreviousHash}-{Data}");
-            byte[] outputBytes = sha256.ComputeHash(inputBytes);
-            Hash = Convert.ToBase64String(outputBytes);
-
+            Hash = EncodeHashString();
         }
+        
+        public bool ValidateHash() 
+        { 
+            return Hash == EncodeHashString(); 
+        } 
+
+        private string EncodeHashString()
+        {
+            SHA256 sha256 = SHA256.Create();
+            byte[] inputBytes = Encoding.ASCII.GetBytes($"{TimeStamp}-{PreviousHash}-{Data}");
+            byte[] outputBytes = sha256.ComputeHash(inputBytes);
+
+            return Convert.ToBase64String(outputBytes);
+        }
+
     }
 }
