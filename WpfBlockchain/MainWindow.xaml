@@ -10,9 +10,9 @@
     <Grid ShowGridLines="True">
 
         <Grid.RowDefinitions>
+            <RowDefinition Height="180"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="60"/>
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0">
@@ -23,7 +23,7 @@
                 <RowDefinition Height="26"/>
                 <RowDefinition Height="26"/>
                 <RowDefinition Height="26"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="2*"/>
             </Grid.RowDefinitions>
 
             <Grid.ColumnDefinitions>
@@ -41,19 +41,15 @@
                      Margin="2" x:Name="tbData" />
 
             <DockPanel Grid.Row="5" Grid.Column="2" LastChildFill="True">
-                <Button DockPanel.Dock="Right" Width="30" Margin="2" x:Name="btnOpenPath" Content="..." />
+                <Button DockPanel.Dock="Right" Width="30" Margin="2" x:Name="btnOpenPath" Content="..." Click="btnOpenPath_Click" />
                 <ComboBox Margin="2" x:Name="cbPath" SelectedIndex="0">
-                    <ComboBoxItem Content="C://Temp" />
-                    <ComboBoxItem Content="-" />
-                    <ComboBoxItem Content="*" />
-                    <ComboBoxItem Content="/" />
-                    <ComboBoxItem Content="%" />
+                    <ComboBoxItem Content=".\" />
                 </ComboBox>
             </DockPanel>
 
-            <Button Grid.Row="2" Grid.Column="3" Margin="2" x:Name="btnAddData" Content="Daten hinzufügen" />
+            <Button Grid.Row="2" Grid.Column="3" Margin="2" x:Name="btnAddData" Content="Daten hinzufügen" Click="btnAddData_Click" />
             <Button Grid.Row="3" Grid.Column="3" Margin="2" x:Name="btnChainCheck" Content="Chain prüfen" />
-            <Button Grid.Row="4" Grid.Column="3" Margin="2" x:Name="btnChainSave" Content="Chain sichern" />
+            <Button Grid.Row="4" Grid.Column="3" Margin="2" x:Name="btnChainSave" Content="Chain sichern" Click="btnChainSave_Click" />
             <Button Grid.Row="5" Grid.Column="3" Margin="2" x:Name="btnChainLoad" Content="Chain laden" />
 
 
@@ -63,10 +59,8 @@
             <!--<TextBox Grid.Row="4" Grid.Column="1" Margin="2" x:Name="tbResult"/>-->
         </Grid>
 
-        <Grid Grid.Row="1">
-            
-        </Grid>
-        
+        <DataGrid Grid.Row="1" x:Name="dataGrid1" />
+                
         <Grid Grid.Row="2">
             <ListBox x:Name="lbxLog" />
         </Grid>
