@@ -54,12 +54,27 @@
 
             <Button Grid.Row="2" Grid.Column="2" Margin="2" x:Name="btnAddData" Content="Daten hinzufügen" Click="btnAddData_Click" BorderBrush="#B265C9E4" />
             <Button Grid.Row="3" Grid.Column="2" Margin="2" x:Name="btnChainCheck" Content="Chain prüfen" Click="btnChainCheck_Click" BorderBrush="#B265C9E4" />
-            <Button Grid.Row="4" Grid.Column="2" Margin="2" x:Name="btnChainSave" Content="Chain sichern" Click="btnChainSave_Click" BorderBrush="#B265C9E4" />
-            <Button Grid.Row="5" Grid.Column="2" Margin="2" x:Name="btnChainLoad" Content="Chain laden" Click="btnChainLoad_Click" BorderBrush="#B265C9E4" />
+            <Button Grid.Row="4" Grid.Column="2" Margin="2" x:Name="btnBlockDelete" Content="Block entfernen" BorderBrush="#B265C9E4" Click="btnBlockDelete_Click" />
+            <DockPanel Grid.Column="2" Grid.Row="5">
+                <Button Margin="2" x:Name="btnChainLoad" Content="Chain laden" Click="btnChainLoad_Click" BorderBrush="#B265C9E4" Padding="3,1,3,1" />
+                <Button Margin="2" x:Name="btnChainSave" Content="speichern" Click="btnChainSave_Click" BorderBrush="#B265C9E4" />
+            </DockPanel>
 
         </Grid>
 
-        <DataGrid Grid.Row="1" x:Name="dataGrid1" FontSize="12" BorderThickness="0,1,0,1" />
+        <!--<DataGrid Grid.Row="1" x:Name="dataGrid1" FontSize="12" BorderThickness="0,1,0,1" />-->
+
+        <!--SelectedCellsChanged="dataChain_SelectedCellsChanged"-->
+        <DataGrid Grid.Row="1" x:Name="dataGrid1" AutoGenerateColumns="False" 
+                  FontSize="12" BorderThickness="0,1,0,1">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding Index}" Header="Index" Width="Auto"/>
+                <DataGridTextColumn Binding="{Binding TimeStamp}" Header="Zeitpunkt" Width="Auto"/>
+                <DataGridTextColumn Binding="{Binding Data}" Header="Data" Width="4*"/>
+                <DataGridTextColumn Binding="{Binding Hash}" Header="Hash" Width="4*"/>
+                <DataGridTextColumn Binding="{Binding PreviousHash}" Header="Previous Hash" Width="4*"/>
+            </DataGrid.Columns>
+        </DataGrid>
 
         <ListBox Grid.Row="2" x:Name="lbxLog" FontFamily="Consolas" FontSize="11" Background="#FFCEDBDE" BorderThickness="0,0,0,0" />
 

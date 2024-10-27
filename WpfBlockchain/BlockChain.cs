@@ -49,5 +49,24 @@ namespace WpfBlockchain
             }
             return -1;      // -1 => OK, check passed
         }
+
+        public void RemoveBlock(Block block)
+        {
+            int index = block.Index;
+            Chain.Remove(block);
+            for (int i = index; i < Chain.Count; i++)
+            {
+                Chain[i].Index = i;
+                if (i != 0)
+                {
+                    Chain[i].PreviousHash = Chain[i - 1].Hash;
+                }
+                else
+                {
+                    Chain[i].PreviousHash = String.Empty;
+                }
+                Chain[i].CalculateHash();
+            }
+        }
     }
 }

@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace WpfBlockchain
 {
@@ -20,6 +21,8 @@ namespace WpfBlockchain
     /// </summary>
     public partial class MainWindow : Window
     {
+        private const string _fileName = "\\blockchain.json";
+
         public BlockChain BlkChain {  get; private set; }
 
         public MainWindow()
@@ -38,14 +41,12 @@ namespace WpfBlockchain
         {
             Block b = new Block(DateTime.Now, $"{{{tbData.Text}}}");
             BlkChain.AddBlock(b);
-            dataGrid1.ItemsSource = null;
-            dataGrid1.ItemsSource = BlkChain.Chain;
+            UpdateDataGrid();
         }
 
         private void btnOpenPath_Click(object sender, RoutedEventArgs e)
         {
             OpenFolderDialog dialog = new();
-            dialog.Multiselect = false;
             dialog.Title = "Ordner auswählen...";
             dialog.ShowDialog();
             if (dialog.FolderName.Length == 0)
@@ -60,20 +61,15 @@ namespace WpfBlockchain
         {
             try
             {
-                string fullPath = cbPath.Text + "\\blockchain.json";
+                string fullPath = cbPath.Text + _fileName;
                 JsonSerializerOptions jsOptions = new() { WriteIndented = true };
                 string json = JsonSerializer.Serialize<BlockChain>(BlkChain, jsOptions);
                 File.WriteAllText(fullPath, json);
-                
-                lbxLog.Items.Insert(0, new ListBoxItem { 
-                        Content = "Save chain [OK]: " + fullPath, 
-                        Foreground = Brushes.SeaGreen });
+                AddLogMessage("Save chain [OK]: " + fullPath);
             }
             catch (Exception ex)
             {
-                lbxLog.Items.Insert(0, new ListBoxItem {
-                        Content = "Save chain [FAIL]: " + ex,
-                        Foreground = Brushes.Firebrick });
+                AddLogMessage("Save chain [FAIL]: " + ex, false);
                 Debug.WriteLine(ex);
             }
         }
@@ -82,21 +78,15 @@ namespace WpfBlockchain
         {
             try
             {
-                string fullPath = cbPath.Text + "\\blockchain.json";
+                string fullPath = cbPath.Text + _fileName;
                 string json = File.ReadAllText(fullPath);
-                dataGrid1.ItemsSource = null;
                 BlkChain = JsonSerializer.Deserialize<BlockChain>(json) ?? BlkChain;        // ?? inline null check
-                dataGrid1.ItemsSource = BlkChain.Chain;
-                
-                lbxLog.Items.Insert(0, new ListBoxItem {
-                        Content = "Load chain [OK]: " + fullPath,
-                        Foreground = Brushes.SeaGreen });
+                UpdateDataGrid();
+                AddLogMessage("Load chain [OK]: " + fullPath);
             }
             catch (Exception ex)
             {
-                lbxLog.Items.Insert(0, new ListBoxItem {
-                        Content = "Load chain [FAIL]: " + ex,
-                        Foreground = Brushes.Firebrick });
+                AddLogMessage("Load chain [FAIL]: " + ex, false);
                 Debug.WriteLine(ex);
             }
         }
@@ -106,16 +96,39 @@ namespace WpfBlockchain
             int validationState = BlkChain.ValidateChain();
             if (validationState == -1)
             {
-                lbxLog.Items.Insert(0, new ListBoxItem {
-                        Content = "ChainValidation [OK]: Die Blockchain enthält keine Fehler.",
-                        Foreground = Brushes.SeaGreen });
+                AddLogMessage("ChainValidation [OK]: Die Blockchain enthält keine Fehler.");
             } 
             else
             {
-                lbxLog.Items.Insert(0, new ListBoxItem {
-                        Content = "ChainValidation [FAIL]: Fehler bei Index" + validationState,
-                        Foreground = Brushes.Firebrick });
+                AddLogMessage("ChainValidation [FAIL]: Fehler bei Index" + validationState, false);
             }
+        }
+
+        private void btnBlockDelete_Click(object sender, RoutedEventArgs e)
+        {
+            // check not null + cast as Block
+            if (dataGrid1.SelectedItem is not Block b)
+            {
+                AddLogMessage("Delete block [FAIL]: Kein Block markiert/gefunden.", false);
+                return;
+            }
+            BlkChain.RemoveBlock(b);
+            UpdateDataGrid();
+            AddLogMessage("Delete block [OK]: Block wurde entfernt und Hashes neu berechnet.");
+        }
+
+        private void UpdateDataGrid()
+        {
+            dataGrid1.ItemsSource = null;
+            dataGrid1.ItemsSource = BlkChain.Chain;
+        }
+
+        private void AddLogMessage(string msg, bool isOk = true) 
+        { 
+            ListBoxItem item = new();
+            item.Content = msg;
+            item.Foreground = (isOk) ? Brushes.SeaGreen : Brushes.Firebrick;
+            lbxLog.Items.Insert(0, item);
         }
     }
 }

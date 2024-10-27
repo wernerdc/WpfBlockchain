@@ -16,7 +16,7 @@ namespace WpfBlockchain
         public string Hash { get; set; } = String.Empty;
         public string PreviousHash { get; set; } = String.Empty;
 
-        // DEBUG: causes datagrid error that adds an empty row at the end
+        // DEBUG: empty constructor causes datagrid error that adds an empty row at the end
         //public Block() { }
 
         public Block(DateTime timeStamp, string data)
